@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.practica1_pmdm_ejer3">
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -16,7 +16,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Practica1_PMDM_Ejer3"
         tools:targetApi="33">
-
+        <service
+            android:name=".NumeroPrimosServicioSP"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".NumroPrimoServicioSegundoPlano"
+            android:enabled="true"
+            android:exported="true" />
         <service android:name=".NumeroPrimoServicio" />
 
         <activity

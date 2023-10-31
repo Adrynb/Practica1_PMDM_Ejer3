@@ -11,7 +11,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import java.util.concurrent.Executors
 
-class NumeroPrimoServicio : Service() {
+class NumeroPrimosServicioSP : Service() {
     private val CHANNEL_ID = "PrimoCanaldeServicio"
     private lateinit var manager: NotificationManager
     private val notificationId = 101
@@ -65,7 +65,7 @@ class NumeroPrimoServicio : Service() {
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Resultado Numeros Primos")
             .setContentText(resultadoPrimosParaImprimir)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentIntent(pendingIntent)
             .build()
         manager.notify(notificationId, notification)

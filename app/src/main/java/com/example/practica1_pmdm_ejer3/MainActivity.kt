@@ -15,8 +15,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var CalcularBoton: Button
     lateinit var CambiarColorBoton: Button
+    lateinit var calcularSPboton: Button
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 
     fun onClickCalcular(view: View) {
         val serviceIntent = Intent(this, NumeroPrimoServicio::class.java)
+        startService(serviceIntent)
+    }
+    fun onClickCalcularSP(view: View) {
+        val serviceIntent = Intent(this, NumeroPrimosServicioSP::class.java)
         startService(serviceIntent)
     }
 
