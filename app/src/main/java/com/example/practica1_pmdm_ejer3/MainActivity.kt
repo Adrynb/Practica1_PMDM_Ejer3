@@ -1,6 +1,7 @@
 package com.example.practica1_pmdm_ejer3
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,11 +26,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickCalcular(view: View) {
-        val maxNumber = Integer.MAX_VALUE / 40000
-        val numerosPrimos = cal_primos(maxNumber)
-
-        Log.d("NumerosPrimos", numerosPrimos.joinToString(", ")) // Imprimir los numeros primos en LogCat
-
+        val serviceIntent = Intent(this, NumeroPrimoServicio::class.java)
+        startService(serviceIntent)
     }
 
     fun onClickCambiarColor(view: View) {
@@ -37,7 +35,14 @@ class MainActivity : AppCompatActivity() {
         val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         CambiarColorBoton.setBackgroundColor(color)
     }
+/*
+    fun onClickCalcular(view: View) {
+        val maxNumber = Integer.MAX_VALUE / 40000
+        val numerosPrimos = cal_primos(maxNumber)
 
+        Log.d("NumerosPrimos", numerosPrimos.toString()) // Imprimir los numeros primos en LogCat
+
+    }
     fun cal_primos(n: Int): ArrayList<Int> {
         var elementos = ArrayList<Int>()
 
@@ -49,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
         return elementos
     }
-
     private fun esPrimo(n: Int, divisor: Int): Boolean {
         if (divisor <= 1) {
             return true
@@ -59,4 +63,5 @@ class MainActivity : AppCompatActivity() {
             return esPrimo(n, divisor - 1)
         }
     }
+ */
 }
