@@ -26,10 +26,10 @@ class MainActivity : AppCompatActivity() {
 
     fun onClickCalcular(view: View) {
         val maxNumber = Integer.MAX_VALUE / 40000
-        val numerosPrimos = (1..maxNumber).filter { esPrimo(it) }
+        val numerosPrimos = cal_primos(maxNumber)
 
-        // Imprimir los números primos en LogCat
-        Log.d("NumerosPrimos", numerosPrimos.joinToString(", "))
+        Log.d("NumerosPrimos", numerosPrimos.joinToString(", ")) // Imprimir los numeros primos en LogCat
+
     }
 
     fun onClickCambiarColor(view: View) {
@@ -38,11 +38,25 @@ class MainActivity : AppCompatActivity() {
         CambiarColorBoton.setBackgroundColor(color)
     }
 
-    private fun esPrimo(num: Int): Boolean {
-        if (num <= 1) return false
-        for (i in 2 until num) {
-            if (num % i == 0) return false
+    fun cal_primos(n: Int): ArrayList<Int> {
+        var elementos = ArrayList<Int>()
+
+        for (i in 1..n) {
+            if (esPrimo(i, i - 1)) {
+                elementos.add(i)
+            }
         }
-        return true
+
+        return elementos
+    }
+
+    private fun esPrimo(n: Int, divisor: Int): Boolean {
+        if (divisor <= 1) {
+            return true
+        } else if (n % divisor == 0) {
+            return false
+        } else {
+            return esPrimo(n, divisor - 1)
+        }
     }
 }
