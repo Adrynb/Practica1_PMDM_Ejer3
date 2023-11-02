@@ -1,23 +1,35 @@
-@file:Suppress("DEPRECATION")
-
 package com.example.practica1_pmdm_ejer3
 
 import android.app.*
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import java.util.concurrent.Executors
 
 class NumeroPrimoServicio : Service() {
-    private val CHANNEL_ID = "PrimoCanaldeServicio"
+    private val CHANNEL_ID = "ForegroundServiceChannel"
     private lateinit var manager: NotificationManager
-    private val notificationId = 101
-    private val executor = Executors.newSingleThreadExecutor()
+    private var enable: Boolean = false
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onCreate() {
+        super.onCreate()
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID,
+                "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(serviceChannel)
+        }
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         createNotificationChannel()
-
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this,
@@ -25,46 +37,58 @@ class NumeroPrimoServicio : Service() {
             notificationIntent,
             PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-
-        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("NumeroPrimoServicio")
+        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Ejemplo Servicio primer plano")
+            .setContentText("Calculating Prime Numbers...")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
-
-        val notification: Notification = notificationBuilder.build()
-        startForeground(notificationId, notification)
-
-        executor.execute {
-            val maxNumber = Integer.MAX_VALUE / 40000
-            val numerosPrimos = cal_primos(maxNumber)
-
-            val resultadoPrimosParaImprimir = "Numero primos: $numerosPrimos"
-            Log.d("numerosPrimos", resultadoPrimosParaImprimir)
-
-            notificationBuilder.setContentText(resultadoPrimosParaImprimir)
-            manager.notify(notificationId, notificationBuilder.build())
-
-            stopForeground(true)
-            stopSelf()
-        }
-
+            .build()
+        startForeground(102, notification)
+        runInBackground()
         return START_NOT_STICKY
+    }
+
+    private fun runInBackground() {
+        enable = true
+        Thread {
+            while (enable) {
+                Log.e("Service", "Service is running...")
+                try {
+                    val maxNumber = Integer.MAX_VALUE / 40000
+                    val numerosPrimos = cal_primos(maxNumber)
+                    val resultadoPrimosParaImprimir = "Numero primos: $numerosPrimos"
+                    Log.d("numerosPrimos", resultadoPrimosParaImprimir)
+
+                    val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle("Resultado Numeros Primos")
+                        .setContentText(resultadoPrimosParaImprimir)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setContentIntent(PendingIntent.getActivity(
+                            this,
+                            0,
+                            Intent(this, MainActivity::class.java),
+                            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                        ))
+                        .build()
+
+                    manager.notify(103, notification)
+
+                    Thread.sleep(2000)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+        }.start()
+    }
+
+    override fun onDestroy() {
+        enable = false
+        super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
-
-    private fun createNotificationChannel() {
-        val serviceChannel = NotificationChannel(
-            CHANNEL_ID,
-            "Numeros Primos Canal de Servicio",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(serviceChannel)
-    }
-
 
     fun cal_primos(n: Int): ArrayList<Int> {
         var elementos = ArrayList<Int>()
@@ -90,3 +114,4 @@ class NumeroPrimoServicio : Service() {
         return true
     }
 }
+
