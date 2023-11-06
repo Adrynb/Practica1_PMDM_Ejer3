@@ -1,6 +1,10 @@
 package com.example.practica1_pmdm_ejer3
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
@@ -8,13 +12,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 
 class NumeroPrimoServicio : Service() {
-    private val CHANNEL_ID = "ForegroundServiceChannel"
+    private val CHANNEL_ID = "Primer plano canal"
     private lateinit var manager: NotificationManager
     private var enable: Boolean = false
-
-    override fun onCreate() {
-        super.onCreate()
-    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -39,7 +39,7 @@ class NumeroPrimoServicio : Service() {
         )
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Ejemplo Servicio primer plano")
-            .setContentText("Calculating Prime Numbers...")
+            .setContentText("Calculando serivioc primer plano...")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .build()
@@ -52,7 +52,7 @@ class NumeroPrimoServicio : Service() {
         enable = true
         Thread {
             while (enable) {
-                Log.e("Service", "Service is running...")
+                Log.e("Service", "Servicio corriendo...")
                 try {
                     val maxNumber = Integer.MAX_VALUE / 40000
                     val numerosPrimos = cal_primos(maxNumber)
@@ -60,15 +60,17 @@ class NumeroPrimoServicio : Service() {
                     Log.d("numerosPrimos", resultadoPrimosParaImprimir)
 
                     val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle("Resultado Numeros Primos")
+                        .setContentTitle("Resultado Numeros Primos en primer plano")
                         .setContentText(resultadoPrimosParaImprimir)
                         .setSmallIcon(R.drawable.ic_launcher_foreground)
-                        .setContentIntent(PendingIntent.getActivity(
-                            this,
-                            0,
-                            Intent(this, MainActivity::class.java),
-                            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                        ))
+                        .setContentIntent(
+                            PendingIntent.getActivity(
+                                this,
+                                0,
+                                Intent(this, MainActivity::class.java),
+                                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                            )
+                        )
                         .build()
 
                     manager.notify(103, notification)
