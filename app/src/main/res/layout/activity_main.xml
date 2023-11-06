@@ -47,4 +47,17 @@
         app:layout_constraintBottom_toTopOf="@+id/calcularPrimos"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/calcServiceIntent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="109dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="381dp"
+        android:onClick="onClickCalcularServiceIntent"
+        android:text="Calcular Service Intent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cambiarColor" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

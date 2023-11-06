@@ -32,7 +32,10 @@ class MainActivity : AppCompatActivity() {
         val serviceIntent = Intent(this, NumeroPrimosServicioSP::class.java)
         startService(serviceIntent)
     }
-
+    fun onClickCalcularServiceIntent(view: View) {
+        val serviceIntent = Intent(this, NumeroPrimosServicioInten::class.java)
+        startService(serviceIntent)
+    }
     fun onClickCambiarColor(view: View) {
         val rnd = Random()
         val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
