@@ -33,7 +33,10 @@ class MainActivity : AppCompatActivity() {
         startService(serviceIntent)
     }
     fun onClickCalcularServiceIntent(view: View) {
-        val serviceIntent = Intent(this, NumeroPrimosServicioInten::class.java)
+        val serviceIntent = Intent(this, NumeroPrimosServicioInten::class.java).apply {
+            action = ACTION_CALCULATE_PRIME
+            putExtra(EXTRA_NUMBER, 5)
+        }
         startService(serviceIntent)
     }
     fun onClickCambiarColor(view: View) {
