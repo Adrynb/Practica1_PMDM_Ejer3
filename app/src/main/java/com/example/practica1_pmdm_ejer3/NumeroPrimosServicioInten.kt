@@ -36,12 +36,22 @@ private const val CHANNEL_ID = "channel_01"
 
 class NumeroPrimosServicioInten : IntentService("NumeroPrimosServicioInten") {
 
+    @SuppressLint("MissingPermission")
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_CALCULATE_PRIME -> {
                 val number = intent.getIntExtra(EXTRA_NUMBER, 0)
-                handleActionCalculatePrime(number)
-            }
+                val primeNumbers = calculatePrimeNumbers(number)
+
+                Log.i("NumeroPrimosServicioInten", "Numeros primos de $number: $primeNumbers")
+
+                val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentTitle("Calculo primos")
+                    .setContentText("Numeros primos de $number: $primeNumbers")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+                NotificationManagerCompat.from(this).notify(1, notificationBuilder.build())            }
         }
     }
 
@@ -60,21 +70,6 @@ class NumeroPrimosServicioInten : IntentService("NumeroPrimosServicioInten") {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun handleActionCalculatePrime(number: Int) {
-        val primeNumbers = calculatePrimeNumbers(number)
-
-        Log.i("NumeroPrimosServicioInten", "Numeros primos de $number: $primeNumbers")
-
-        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("Calculo primos")
-            .setContentText("Numeros primos de $number: $primeNumbers")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        NotificationManagerCompat.from(this).notify(1, notificationBuilder.build())
     }
 
     private fun calculatePrimeNumbers(number: Int): List<Int> {
