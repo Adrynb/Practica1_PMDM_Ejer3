@@ -1,12 +1,15 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.practica1_pmdm_ejer3
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.IntentService
-import android.content.Intent
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
+import android.content.Intent
+import android.os.Build
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
@@ -42,34 +45,35 @@ class NumeroPrimosServicioInten : IntentService("NumeroPrimosServicioInten") {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "channel_01"
+            val descriptionText = "intent serivce notifcation"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
     private fun handleActionCalculatePrime(number: Int) {
         val primeNumbers = calculatePrimeNumbers(number)
-        val result = primeNumbers.joinToString(separator = ", ")
 
-        // Log result
-        Log.i("NumeroPrimosServicioInten", "Prime numbers of $number: $result")
+        Log.i("NumeroPrimosServicioInten", "Numeros primos de $number: $primeNumbers")
 
-        // Notify result
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("Prime Calculation")
-            .setContentText("Prime numbers of $number: $result")
+            .setContentTitle("Calculo primos")
+            .setContentText("Numeros primos de $number: $primeNumbers")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
         NotificationManagerCompat.from(this).notify(1, notificationBuilder.build())
     }
 
@@ -82,6 +86,7 @@ class NumeroPrimosServicioInten : IntentService("NumeroPrimosServicioInten") {
         }
         return primes
     }
+
     private fun isPrime(number: Int): Boolean {
         if (number <= 1) return false
         for (i in 2 until number) {
@@ -90,63 +95,4 @@ class NumeroPrimosServicioInten : IntentService("NumeroPrimosServicioInten") {
         return true
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private fun handleActionFoo(param1: String?, param2: String?) {
-        TODO("Handle action Foo")
-    }
-
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private fun handleActionBaz(param1: String?, param2: String?) {
-        TODO("Handle action Baz")
-    }
-
-    companion object {
-        @JvmStatic
-        fun startActionCalculatePrime(context: Context, number: Int) {
-            val intent = Intent(context, NumeroPrimosServicioInten::class.java).apply {
-                action = ACTION_CALCULATE_PRIME
-                putExtra(EXTRA_NUMBER, number)
-            }
-            context.startService(intent)
-        }
-        /**
-         * Starts this service to perform action Foo with the given parameters. If
-         * the service is already performing a task this action will be queued.
-         *
-         * @see IntentService
-         */
-        // TODO: Customize helper method
-        @JvmStatic
-        fun startActionFoo(context: Context, param1: String, param2: String) {
-            val intent = Intent(context, NumeroPrimosServicioInten::class.java).apply {
-                action = ACTION_FOO
-                putExtra(EXTRA_PARAM1, param1)
-                putExtra(EXTRA_PARAM2, param2)
-            }
-            context.startService(intent)
-        }
-
-        /**
-         * Starts this service to perform action Baz with the given parameters. If
-         * the service is already performing a task this action will be queued.
-         *
-         * @see IntentService
-         */
-        // TODO: Customize helper method
-        @JvmStatic
-        fun startActionBaz(context: Context, param1: String, param2: String) {
-            val intent = Intent(context, NumeroPrimosServicioInten::class.java).apply {
-                action = ACTION_BAZ
-                putExtra(EXTRA_PARAM1, param1)
-                putExtra(EXTRA_PARAM2, param2)
-            }
-            context.startService(intent)
-        }
-    }
 }
